@@ -36,4 +36,30 @@ public class ReceivingSystem {
     w.set(wSpot, nw);
     return;
   }
+  public void deleteBox(ArrayList<Warehouse> w) throws IOException{
+    Scanner keyboard = new Scanner(System.in);
+    Box nb = new Box();
+    int warehouseID;
+    int wSpot = -1;
+    Warehouse nw = new Warehouse();
+    boolean found = false;
+    System.out.println("Please enter the ID of the warehouse that the target box is in.");
+    warehouseID = keyboard.nextInt();
+    for (int i = 0; i < w.size(); i++) {
+      if (warehouseID == w.get(i).warehouseID) {
+        nw = w.get(i);
+        wSpot = i;
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      System.out.println("ID does not exist.");
+      return;
+    }
+    System.out.println("Please enter the ID of the box.");
+    nw.removeBox(keyboard.nextInt());
+    w.set(wSpot, nw);
+    return;
+  }
 }
