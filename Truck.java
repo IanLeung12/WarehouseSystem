@@ -2,26 +2,75 @@ import java.util.ArrayList;
 
 public class Truck {
 
-    int truckID;
-    int maxWeight;
-    int height;
-    int length;
-    int width;
+    private int truckID;
+    private int maxWeight;
+    private int height;
+    private int length;
+    private int width;
     ArrayList<Box> boxes = new ArrayList<>();
-
-
     void addBox(Box box){
-
+        boxes.add(box);
     }
     void removeBox(int boxID){
 
     }
     int getLoadedWeight(){
         int weight = 0;
-
-
+        for(Box i: boxes){
+            weight = weight + i.getWeight();
+        }
         return(weight);
     }
 
+    boolean isValid(Box box, int x, int y){
+        boolean isVal = true;
 
+        if((this.getLoadedWeight() + box.getWeight())> maxWeight){
+            isVal = false;
+        }
+
+
+
+        return(isVal);
+    }
+
+    public int getTruckID() {
+        return truckID;
+    }
+
+    public int getMaxWeight() {
+        return maxWeight;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setTruckID(int truckID) {
+        this.truckID = truckID;
+    }
+
+    public void setMaxWeight(int maxWeight) {
+        this.maxWeight = maxWeight;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
 }
