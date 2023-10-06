@@ -80,7 +80,16 @@ public class ReceivingSystem {
         nt.height = readF.nextInt();
         nt.length = readF.nextInt();
         nt.width = readF.nextInt();
-        t.add(nt);
+        nt.inWarehouse = readF.nextInt();
+        t.add(nt) ;
+        if (nt.inWarehouse != -1) {
+          for (int i = 0; i < w.size(); i++) {
+            if (w.get(i).warehouseID == t.inWarehouse) {
+              w.get(i).addTruck(nt);
+              break;
+            }
+          }
+        }
         nt = new Truck();
       }
     } else {
