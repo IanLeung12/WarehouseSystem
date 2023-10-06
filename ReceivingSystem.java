@@ -38,7 +38,62 @@ public class ReceivingSystem {
     w.set(wSpot, nw);
     return;
   }
-
+  //----
+  public void uploadInventory(File file, int ftype, ArrayList<Warehouse> w, ArrayList<Truck> t) throws IOException {
+    Scanner readF = new Scanner(file);
+    Box nb = new Box();
+    Truck nt = new Truck();
+    Warehouse nw = new Warehouse();
+    if (ftype == 1) {
+      while(readF.hasNext()) {
+        nb.boxID = readF.nextInt();
+        nb.weight = readF.nextInt();
+        nb.height = readF.nextInt();
+        nb.length = readF.nextInt();
+        nb.width = readF.nextInt();
+        nb.positionXinTruck = readF.nextInt();
+        nb.positionYinTruck = readF.nextInt();
+        nb.positionZinTruck = readF.nextInt();
+        nb.inTruck = readF.nextInt();
+        nb.inWarehouse = readF.nextInt();
+        if (nb.inTruck != -1) {
+          for (int i = 0; i < t.size(); i++) {
+            if (t.get(i).truckID == nb.inTruck) {
+              t.get(i).addBox(nb);
+              break;
+            }
+          }
+        } else {
+          for (int i = 0; i < w.size(); i++) {
+            if (w.get(i).warehouseID == nb.inWarehouse) {
+              w.get(i).addBox(nb);
+              break;
+            }
+          }
+        }
+      }
+      nb = new Box();
+    } else if (ftype == 2){
+      while (readF.hasNext()) {
+        nt.truckID = readF.nextInt();
+        nt.maxWeight = readF.nextInt();
+        nt.height = readF.nextInt();
+        nt.length = readF.nextInt();
+        nt.width = readF.nextInt();
+        t.add(nt);
+        nt = new Truck();
+      }
+    } else {
+      while (readF.hasNext()) {
+        nw.warehouseID = readF.nextInt();
+        nw.maxBoxes = readF.nextInt();
+        nw.maxTrucks = readF.nextInt();
+        w.add(nw);
+        nw = new Warehouse();
+      }
+    }
+  }
+  //----
   void start(){
 
   }
