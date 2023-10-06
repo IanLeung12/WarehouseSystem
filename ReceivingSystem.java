@@ -3,6 +3,8 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class ReceivingSystem {
+
+
   public void createBox(ArrayList<Warehouse> w) throws IOException {
     Scanner keyboard = new Scanner(System.in);
     Box nb = new Box();
@@ -25,41 +27,19 @@ public class ReceivingSystem {
       return;
     }
     System.out.println("Please enter the weight of the box.");
-    nb.weight = keyboard.nextInt();
+    nb.setWeight(keyboard.nextInt());
     System.out.println("Please enter the height of the box.");
-    nb.height = keyboard.nextInt();
+    nb.setHeight(keyboard.nextInt());
     System.out.println("Please enter the length of the box.");
-    nb.length = keyboard.nextInt();
+    nb.setLength(keyboard.nextInt());
     System.out.println("Please enter the width of the box.");
-    nb.width = keyboard.nextInt();
+    nb.setWidth(keyboard.nextInt());
     nw.addBox(nb);
     w.set(wSpot, nw);
     return;
   }
-  public void deleteBox(ArrayList<Warehouse> w) throws IOException{
-    Scanner keyboard = new Scanner(System.in);
-    Box nb = new Box();
-    int warehouseID;
-    int wSpot = -1;
-    Warehouse nw = new Warehouse();
-    boolean found = false;
-    System.out.println("Please enter the ID of the warehouse that the target box is in.");
-    warehouseID = keyboard.nextInt();
-    for (int i = 0; i < w.size(); i++) {
-      if (warehouseID == w.get(i).warehouseID) {
-        nw = w.get(i);
-        wSpot = i;
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
-      System.out.println("ID does not exist.");
-      return;
-    }
-    System.out.println("Please enter the ID of the box.");
-    nw.removeBox(keyboard.nextInt());
-    w.set(wSpot, nw);
-    return;
+
+  void start(){
+
   }
 }
