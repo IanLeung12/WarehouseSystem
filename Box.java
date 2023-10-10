@@ -6,7 +6,14 @@ public class Box {
     private int width;
     private int posXInTruck;
     private int positionYInTruck;
-
+    private int inTruck;
+    private int inWarehouse;
+    Box () {
+        this.posXInTruck = -1;
+        this.positionYInTruck = -1;
+        this.inTruck = -1;
+        this.inWarehouse = -1;
+    }
     void rotate(){
         int tempLength;
         tempLength = this.length;
@@ -68,8 +75,5 @@ public class Box {
 
     public void setPositionYInTruck(int positionYInTruck) {
         this.positionYInTruck = positionYInTruck;
-    }
-    public void setPosZinTruck(int pz) {
-        this.positionZINTruck = pz;
     }
 }
