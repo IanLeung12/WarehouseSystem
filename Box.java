@@ -48,7 +48,12 @@ public class Box {
     public int getPositionYInTruck() {
         return positionYInTruck;
     }
-
+    public int getInTruck() {
+        return inTruck;
+    }
+    public int getInWarehouse() {
+        return inWarehouse;
+    }
     public void setBoxID(int boxID) {
         this.boxID = boxID;
     }
