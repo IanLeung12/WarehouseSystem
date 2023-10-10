@@ -76,4 +76,10 @@ public class Box {
     public void setPositionYInTruck(int positionYInTruck) {
         this.positionYInTruck = positionYInTruck;
     }
+    public void setinTruck(int it) {
+        this.inTruck = it;
+    }
+    public void setinWarehouse(int iw) {
+        this.inWarehouse = iw;
+    }
 }
