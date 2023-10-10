@@ -21,11 +21,16 @@ public class ReceivingSystem implements ActionListener {
     JButton deleteBox;
     JButton deleteTruck;
     JButton quitBtn;
+    JButton viewBoxes;
+    JButton viewTrucks;
+    
     JPanel addBoxPanel;
     JPanel addTruckPanel;
     JPanel deleteBoxPanel;
     JPanel deleteTruckPanel;
-
+    JPanel showBoxPanel;
+    JPanel showTruckPanel;
+    
     JButton createBoxButton;
     JButton createTruckButton;
 
@@ -69,7 +74,10 @@ public class ReceivingSystem implements ActionListener {
         deleteBoxPanel.setLayout(new BorderLayout());
         deleteTruckPanel = new JPanel();
         deleteBoxPanel.setLayout(new BorderLayout());
-
+        showBoxPanel = new JPanel();
+        showBoxPanel.setLayout(new FlowLayout(FlowLayout, 5, 5));
+        showTruckPanel = new JPanel();
+        showTruckPanel.setLayout(new FlowLayout(FlowLayout, 5, 5));
 
         currentPanel = new JPanel();
         frame.add(currentPanel, BorderLayout.CENTER);
@@ -84,7 +92,7 @@ public class ReceivingSystem implements ActionListener {
         addBtn.setText("Add Box");
         addBtn.setFont(new Font("Raleway", Font.PLAIN, 20));
         addBtn.setFocusable(false);
-        addBtn.setPreferredSize(new Dimension(250, 100));
+        addBtn.setPreferredSize(new Dimension(250, 70));
         addBtn.addActionListener(e -> changePanel(1));
         addBtn.setBackground(Color.lightGray);
         addBtn.setBorder(BorderFactory.createEtchedBorder());
@@ -95,7 +103,7 @@ public class ReceivingSystem implements ActionListener {
         addTruck.setText("Add Truck");
         addTruck.setFont(new Font("Raleway", Font.PLAIN, 20));
         addTruck.setFocusable(false);
-        addTruck.setPreferredSize(new Dimension(250, 100));
+        addTruck.setPreferredSize(new Dimension(250, 70));
         addTruck.addActionListener(e -> changePanel(2));
         addTruck.setBackground(Color.lightGray);
         addTruck.setBorder(BorderFactory.createEtchedBorder());
@@ -106,7 +114,7 @@ public class ReceivingSystem implements ActionListener {
         deleteBox.setText("Delete Box");
         deleteBox.setFont(new Font("Raleway", Font.PLAIN, 20));
         deleteBox.setFocusable(false);
-        deleteBox.setPreferredSize(new Dimension(250, 100));
+        deleteBox.setPreferredSize(new Dimension(250, 70));
         deleteBox.addActionListener(e -> changePanel(3));
         deleteBox.setBackground(Color.lightGray);
         deleteBox.setBorder(BorderFactory.createEtchedBorder());
@@ -116,7 +124,7 @@ public class ReceivingSystem implements ActionListener {
         deleteTruck.setText("Delete Truck");
         deleteTruck.setFont(new Font("Raleway", Font.PLAIN, 20));
         deleteTruck.setFocusable(false);
-        deleteTruck.setPreferredSize(new Dimension(250, 100));
+        deleteTruck.setPreferredSize(new Dimension(250, 70));
         deleteTruck.addActionListener(e -> changePanel(4));
         deleteTruck.setBackground(Color.lightGray);
         deleteTruck.setBorder(BorderFactory.createEtchedBorder());
@@ -126,14 +134,29 @@ public class ReceivingSystem implements ActionListener {
         quitBtn.setText("Quit");
         quitBtn.setFont(new Font("Raleway", Font.PLAIN, 20));
         quitBtn.setFocusable(false);
-        quitBtn.setPreferredSize(new Dimension(250, 100));
+        quitBtn.setPreferredSize(new Dimension(250, 70));
         quitBtn.addActionListener(e -> this.uploadInventory(saveFile));
         quitBtn.addActionListener(e -> frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING)));
         quitBtn.setBackground(Color.lightGray);
         quitBtn.setBorder(BorderFactory.createEtchedBorder());
         sidebar.add(quitBtn);
-
-
+        //----------------
+        viewBoxes = new JButton();
+        viewBoxes.setText("View Boxes");
+        viewBoxes.setFont(new Font("Raleway", Font.PLAIN, 20));
+        viewBoxes.setFocusable(false);
+        viewBoxes.setPreferredSize(new Dimension(250, 70));
+        viewBoxes.addActionListener(e -> )
+        //----------------
+        viewTrucks = new JButton();
+        viewTrucks.setText("View Trucks");
+        viewTrucks.setFont(new Font("Raleway", Font.PLAIN, 20));
+        viewTrucks.setFocusable(false);
+        viewTrucks.setPreferredSize(new Dimension(250, 70));
+        viewTrucks.addActionListener(e -> );
+        //----------------
+        
+        
         JLabel boxIdText = new JLabel();
         boxIdText.setText("     Box ID: ");
         boxIdText.setFont(new Font("Arial", Font.PLAIN, 30));
