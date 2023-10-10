@@ -390,10 +390,10 @@ public class ReceivingSystem implements ActionListener {
      * @param length- new length
      * @param width - new width
      */
-    public void setViewBox() {
+    public void setBoxView() {
       
     }
-    public void setViewTruck() {
+    public void setTruckView() {
     
     }
     public void createBox(int boxID, int weight, int height, int length, int width) {
