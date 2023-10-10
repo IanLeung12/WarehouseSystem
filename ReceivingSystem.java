@@ -64,7 +64,7 @@ public class ReceivingSystem {
           }
         } else {
           for (int i = 0; i < w.size(); i++) {
-            if (w.get(i).getWarehouseID() == nb.getinWarehouse()) {
+            if (nb.getinWarehouse() != -1) {
               w.get(i).addBox(nb);
               break;
             }
