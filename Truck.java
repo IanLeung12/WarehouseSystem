@@ -7,7 +7,12 @@ public class Truck {
     private int height;
     private int length;
     private int width;
+    private int inWarehouse;
     ArrayList<Box> boxes = new ArrayList<>();
+    Truck () {
+        this.truckID = -1;
+        this.inWarehouse = -1;
+    }
     void addBox(Box box){
         boxes.add(box);
     }
@@ -21,7 +26,7 @@ public class Truck {
         }
         return(weight);
     }
-
+    
     boolean isValid(Box box, int x, int y){
         boolean isVal = true;
 
@@ -53,7 +58,9 @@ public class Truck {
     public int getWidth() {
         return width;
     }
-
+    public int getInWarehouse() {
+        return inWarehouse;
+    }
     public void setTruckID(int truckID) {
         this.truckID = truckID;
     }
@@ -72,5 +79,8 @@ public class Truck {
 
     public void setWidth(int width) {
         this.width = width;
+    }
+    public void setInWarehouse(int iw) {
+        this.inWarehouse = iw;
     }
 }
