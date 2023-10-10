@@ -146,16 +146,22 @@ public class ReceivingSystem implements ActionListener {
         viewBoxes.setFont(new Font("Raleway", Font.PLAIN, 20));
         viewBoxes.setFocusable(false);
         viewBoxes.setPreferredSize(new Dimension(250, 70));
-        viewBoxes.addActionListener(e -> )
+        viewBoxes.addActionListener(e -> this.setBoxView());
         //----------------
         viewTrucks = new JButton();
         viewTrucks.setText("View Trucks");
         viewTrucks.setFont(new Font("Raleway", Font.PLAIN, 20));
         viewTrucks.setFocusable(false);
         viewTrucks.setPreferredSize(new Dimension(250, 70));
-        viewTrucks.addActionListener(e -> );
+        viewTrucks.addActionListener(e -> this.setTruckView());
         //----------------
+        JTextArea allb = new JTextArea();
+        allb.setFont(new Font("Arial", Font.PLAIN, 20));
+        showBoxPanel.add(allb);
         
+        JTextArea.allt = new JTextArea();
+        allt.setFont(new Font("Arial", Font.PLAIN, 20));
+        showBoxPanel.add(allt);
         
         JLabel boxIdText = new JLabel();
         boxIdText.setText("     Box ID: ");
@@ -384,6 +390,12 @@ public class ReceivingSystem implements ActionListener {
      * @param length- new length
      * @param width - new width
      */
+    public void setViewBox() {
+      
+    }
+    public void setViewTruck() {
+    
+    }
     public void createBox(int boxID, int weight, int height, int length, int width) {
         if(weight == 0 || height == 0 || length == 0 || width == 0){
             System.out.println("something is wrong with your parameters. PLease enter integers.");
