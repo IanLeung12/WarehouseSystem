@@ -46,26 +46,25 @@ public class ReceivingSystem {
     Warehouse nw = new Warehouse();
     if (ftype == 1) {
       while(readF.hasNext()) {
-        nb.boxID = readF.nextInt();
-        nb.weight = readF.nextInt();
-        nb.height = readF.nextInt();
-        nb.length = readF.nextInt();
-        nb.width = readF.nextInt();
-        nb.positionXinTruck = readF.nextInt();
-        nb.positionYinTruck = readF.nextInt();
-        nb.positionZinTruck = readF.nextInt();
-        nb.inTruck = readF.nextInt();
-        nb.inWarehouse = readF.nextInt();
-        if (nb.inTruck != -1) {
+        nb.setBoxID(readF.nextInt());
+        nb.setWeight(readF.nextInt());
+        nb.setHeight(readF.nextInt());
+        nb.setLength(readF.nextInt());
+        nb.setWidth(readF.nextInt());
+        nb.setPosXinTruck(readF.nextInt());
+        nb.setPositionYinTruck(readF.nextInt());
+        nb.setinTruck(readF.nextInt());
+        nb.setinWarehouse(readF.nextInt());
+        if (nb.getinTruck() != -1) {
           for (int i = 0; i < t.size(); i++) {
-            if (t.get(i).truckID == nb.inTruck) {
+            if (t.get(i).getTruckID() == nb.getinTruck()) {
               t.get(i).addBox(nb);
               break;
             }
           }
         } else {
           for (int i = 0; i < w.size(); i++) {
-            if (w.get(i).warehouseID == nb.inWarehouse) {
+            if (w.get(i).getWarehouseID() == nb.getinWarehouse()) {
               w.get(i).addBox(nb);
               break;
             }
