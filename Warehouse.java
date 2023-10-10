@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.io.File;
 
 public class Warehouse {
-    int WarehouseID;
+    private int warehouseID;
     ArrayList<Box> inventory = new ArrayList<>();
     ArrayList<Truck> trucks = new ArrayList<>();
     final int MAX_BOXES;
@@ -13,7 +13,12 @@ public class Warehouse {
         this.MAX_BOXES = maxBoxes;
         this.MAX_TRUCKS = maxTrucks;
     }
-
+    public int getWarehouseID () {
+        return WarehouseID;
+    }
+    public void setWarehouseID(int wID) {
+        this.warehouseID = wID;
+    }
     public void addBox(Box box) {}
     public void removeBox(int boxID) {};
     public void addTruck(Truck truck) {}
