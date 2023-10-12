@@ -95,12 +95,13 @@ public class Truck {
 
     }
 
+
     /**
      * asArray
      * when called will turn the trucks values into an int array with all of its values in int type
      * @return - the array of ints
      */
-    private int[] asArray() {
+    public int[] asArray() {
         return new int[]{this.truckID, this.maxWeight, this.height, this.length, this.width};
     }
 
@@ -127,8 +128,26 @@ public class Truck {
         return string.toString();
     }
 
+    public String justTruckToString(){
+        StringBuilder string = new StringBuilder("Truck"); // starts with object type
+        int[] values = this.asArray(); // gets vales of itself
+
+        for (int value : values) { // adds all values to the string
+            string.append(" ");
+            string.append(value);
+        }
+        return string.toString();
+    }
 
 
+    /**
+     * getBoxes
+     * gets all the boxes from the truck list
+     * @return - list boxes
+     */
+    public ArrayList<Box> getBoxes() {
+        return boxes;
+    }
 
 
     /**

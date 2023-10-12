@@ -1,5 +1,5 @@
 import javax.swing.*;
-import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,7 +9,19 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.awt.Color;
+import java.util.Arrays;
 
+
+/**
+ * ReceivingSystem
+ * @author Dilen De Silva, Michael Khart
+ * ICS4UE
+ * @version 1.0 - 2023/10/10
+ * Receiving system - a system which is responsible for starting of the warehouse management program. By extention,
+ * it uploads and downloads data stored in text files, is able to move around, create, and delete objects through the
+ * implementation of JAVA SWING
+ */
 public class ReceivingSystem implements ActionListener {
 
     Warehouse warehouse;
@@ -21,16 +33,18 @@ public class ReceivingSystem implements ActionListener {
     JButton deleteBox;
     JButton deleteTruck;
     JButton quitBtn;
-    JButton viewBoxes;
-    JButton viewTrucks;
-    
     JPanel addBoxPanel;
     JPanel addTruckPanel;
     JPanel deleteBoxPanel;
     JPanel deleteTruckPanel;
-    JPanel showBoxPanel;
-    JPanel showTruckPanel;
-    
+
+    JPanel boxes;
+    ArrayList<JLabel> boxLabels;
+
+    JPanel trucks;
+    ArrayList<JLabel> truckLabels;
+
+
     JButton createBoxButton;
     JButton createTruckButton;
 
@@ -39,8 +53,12 @@ public class ReceivingSystem implements ActionListener {
 
     File saveFile;
 
-    ReceivingSystem() {
-        this.warehouse = new Warehouse(0,100,20);
+    /**
+     * Constructor
+     * initializes all the needed buttons, frames etc for the GUI
+     */
+    ReceivingSystem(Warehouse warehouse) {
+        this.warehouse = warehouse;
         frame = new JFrame("Receiving System");
         frame.setSize(800, 680);
         frame.setLayout(new BorderLayout());
@@ -73,11 +91,8 @@ public class ReceivingSystem implements ActionListener {
         deleteBoxPanel = new JPanel();
         deleteBoxPanel.setLayout(new BorderLayout());
         deleteTruckPanel = new JPanel();
-        deleteBoxPanel.setLayout(new BorderLayout());
-        showBoxPanel = new JPanel();
-        showBoxPanel.setLayout(new FlowLayout(FlowLayout, 5, 5));
-        showTruckPanel = new JPanel();
-        showTruckPanel.setLayout(new FlowLayout(FlowLayout, 5, 5));
+        deleteTruckPanel.setLayout(new BorderLayout());
+
 
         currentPanel = new JPanel();
         frame.add(currentPanel, BorderLayout.CENTER);
@@ -92,7 +107,7 @@ public class ReceivingSystem implements ActionListener {
         addBtn.setText("Add Box");
         addBtn.setFont(new Font("Raleway", Font.PLAIN, 20));
         addBtn.setFocusable(false);
-        addBtn.setPreferredSize(new Dimension(250, 70));
+        addBtn.setPreferredSize(new Dimension(250, 100));
         addBtn.addActionListener(e -> changePanel(1));
         addBtn.setBackground(Color.lightGray);
         addBtn.setBorder(BorderFactory.createEtchedBorder());
@@ -103,7 +118,7 @@ public class ReceivingSystem implements ActionListener {
         addTruck.setText("Add Truck");
         addTruck.setFont(new Font("Raleway", Font.PLAIN, 20));
         addTruck.setFocusable(false);
-        addTruck.setPreferredSize(new Dimension(250, 70));
+        addTruck.setPreferredSize(new Dimension(250, 100));
         addTruck.addActionListener(e -> changePanel(2));
         addTruck.setBackground(Color.lightGray);
         addTruck.setBorder(BorderFactory.createEtchedBorder());
@@ -114,8 +129,9 @@ public class ReceivingSystem implements ActionListener {
         deleteBox.setText("Delete Box");
         deleteBox.setFont(new Font("Raleway", Font.PLAIN, 20));
         deleteBox.setFocusable(false);
-        deleteBox.setPreferredSize(new Dimension(250, 70));
+        deleteBox.setPreferredSize(new Dimension(250, 100));
         deleteBox.addActionListener(e -> changePanel(3));
+        deleteBox.addActionListener(e -> showBoxes());
         deleteBox.setBackground(Color.lightGray);
         deleteBox.setBorder(BorderFactory.createEtchedBorder());
         sidebar.add(deleteBox);
@@ -124,45 +140,24 @@ public class ReceivingSystem implements ActionListener {
         deleteTruck.setText("Delete Truck");
         deleteTruck.setFont(new Font("Raleway", Font.PLAIN, 20));
         deleteTruck.setFocusable(false);
-        deleteTruck.setPreferredSize(new Dimension(250, 70));
+        deleteTruck.setPreferredSize(new Dimension(250, 100));
         deleteTruck.addActionListener(e -> changePanel(4));
+        deleteTruck.addActionListener(e -> showTrucks());
         deleteTruck.setBackground(Color.lightGray);
         deleteTruck.setBorder(BorderFactory.createEtchedBorder());
         sidebar.add(deleteTruck);
 
         quitBtn = new JButton();
-        quitBtn.setText("Quit");
+        quitBtn.setText("Save & Quit");
         quitBtn.setFont(new Font("Raleway", Font.PLAIN, 20));
         quitBtn.setFocusable(false);
-        quitBtn.setPreferredSize(new Dimension(250, 70));
-        quitBtn.addActionListener(e -> this.uploadInventory(saveFile));
-        quitBtn.addActionListener(e -> frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING)));
+        quitBtn.setPreferredSize(new Dimension(250, 100));
+        quitBtn.addActionListener(e -> quit());
         quitBtn.setBackground(Color.lightGray);
         quitBtn.setBorder(BorderFactory.createEtchedBorder());
         sidebar.add(quitBtn);
-        //----------------
-        viewBoxes = new JButton();
-        viewBoxes.setText("View Boxes");
-        viewBoxes.setFont(new Font("Raleway", Font.PLAIN, 20));
-        viewBoxes.setFocusable(false);
-        viewBoxes.setPreferredSize(new Dimension(250, 70));
-        viewBoxes.addActionListener(e -> this.setBoxView());
-        //----------------
-        viewTrucks = new JButton();
-        viewTrucks.setText("View Trucks");
-        viewTrucks.setFont(new Font("Raleway", Font.PLAIN, 20));
-        viewTrucks.setFocusable(false);
-        viewTrucks.setPreferredSize(new Dimension(250, 70));
-        viewTrucks.addActionListener(e -> this.setTruckView());
-        //----------------
-        JTextArea allb = new JTextArea();
-        allb.setFont(new Font("Arial", Font.PLAIN, 20));
-        showBoxPanel.add(allb);
-        
-        JTextArea.allt = new JTextArea();
-        allt.setFont(new Font("Arial", Font.PLAIN, 20));
-        showBoxPanel.add(allt);
-        
+
+
         JLabel boxIdText = new JLabel();
         boxIdText.setText("     Box ID: ");
         boxIdText.setFont(new Font("Arial", Font.PLAIN, 30));
@@ -213,27 +208,25 @@ public class ReceivingSystem implements ActionListener {
         boxWidth.setFont(new Font("Consolas", Font.PLAIN,30));
         addBoxPanel.add(boxWidth);
 
-//        JLabel boxColorText = new JLabel();
-//        boxColorText.setText("Box Width: ");
-//        boxColorText.setFont(new Font("Arial", Font.PLAIN, 30));
-//        boxColorText.add(boxWidthText);
-//
-//        JTextField boxColor = new JTextField();
-//        boxWidth.setPreferredSize(new Dimension(300, 50));
-//        boxWidth.setFont(new Font("Consolas", Font.PLAIN,30));
-//        addBoxPanel.add(boxWidth);
+        JLabel boxColorText = new JLabel();
+        boxColorText.setText("Color(R,G,B):");
+        boxColorText.setFont(new Font("Arial", Font.PLAIN, 30));
+        addBoxPanel.add(boxColorText);
 
+        JTextField boxColor = new JTextField();
+        boxColor.setPreferredSize(new Dimension(300, 50));
+        boxColor.setFont(new Font("Consolas", Font.PLAIN,30));
+        addBoxPanel.add(boxColor);
 
         createBoxButton = new JButton("Create Box");
         createBoxButton.setPreferredSize(new Dimension(150, 40));
         createBoxButton.setFocusable(false);
         addBoxPanel.add(createBoxButton);
 
-        createBoxButton.addActionListener(e -> createBox(parseInt(boxId.getText()), parseInt(boxWeight.getText()), parseInt(boxHeight.getText()), parseInt(boxLength.getText()), parseInt(boxWidth.getText())));
+        createBoxButton.addActionListener(e -> {createBox(parseInt(boxId.getText()), parseInt(boxWeight.getText()), parseInt(boxHeight.getText()), parseInt(boxLength.getText()), parseInt(boxWidth.getText()),
+        getColor(boxColor.getText())); boxId.setText(""); boxWeight.setText(""); boxHeight.setText(""); boxLength.setText(""); boxWidth.setText(""); boxColor.setText("");});
 
-        /**
-         * aaaaaaaaaaaaaaaaaaaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-         */
+
         JLabel truckIdText = new JLabel();
         truckIdText.setText("    Truck ID: ");
         truckIdText.setFont(new Font("Arial", Font.PLAIN, 30));
@@ -289,16 +282,13 @@ public class ReceivingSystem implements ActionListener {
         createTruckButton.setFocusable(false);
         addTruckPanel.add(createTruckButton);
 
-        createTruckButton.addActionListener(e -> createTruck(parseInt(truckId.getText()), parseInt(truckMaxWeight.getText()), parseInt(truckHeight.getText()), parseInt(truckLength.getText()), parseInt(truckWidth.getText())));
+        createTruckButton.addActionListener(e -> {createTruck(parseInt(truckId.getText()), parseInt(truckMaxWeight.getText()), parseInt(truckHeight.getText()), parseInt(truckLength.getText()), parseInt(truckWidth.getText()));
+        truckId.setText(""); truckMaxWeight.setText(""); truckHeight.setText(""); truckLength.setText(""); truckWidth.setText("");});
 
-
-        /**
-         * aaaaaaaaaaaaaaaaaaaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-         */
 
         JPanel boxDeletionPanel = new JPanel();
         boxDeletionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
-        boxDeletionPanel.setPreferredSize(new Dimension(new Dimension(420, 400)));
+        boxDeletionPanel.setPreferredSize(new Dimension(new Dimension(420, 150)));
         deleteBoxPanel.add(boxDeletionPanel, BorderLayout.NORTH);
 
         JLabel deletedBoxId = new JLabel();
@@ -316,23 +306,21 @@ public class ReceivingSystem implements ActionListener {
         deleteBoxButton.setFocusable(false);
         boxDeletionPanel.add(deleteBoxButton);
 
-        deleteBoxButton.addActionListener(e -> removeBox(parseInt(deletedBoxText.getText())));
+        deleteBoxButton.addActionListener(e -> {removeBox(parseInt(deletedBoxText.getText()));deletedBoxText.setText("");});
 
-        JPanel boxesPanel = new JPanel();
-        boxesPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 15));
-        for(Box b : this.warehouse.getInventory()){
-            boxesPanel.add(new JLabel(b.toString()), FlowLayout.LEADING);
-        }
-        deleteBoxPanel.add(boxesPanel);
+        this.boxes = new JPanel();
+        boxes.setLayout(new FlowLayout(FlowLayout.CENTER, 200,8));
+        JScrollPane scrollableBoxes = new JScrollPane(this.boxes);
+        deleteBoxPanel.add(scrollableBoxes, BorderLayout.CENTER);
 
 
         JPanel truckDeletionPanel = new JPanel();
         truckDeletionPanel.setLayout(new FlowLayout(FlowLayout.CENTER,10,20));
-        truckDeletionPanel.setPreferredSize(new Dimension(430, 400));
+        truckDeletionPanel.setPreferredSize(new Dimension(420, 150));
         deleteTruckPanel.add(truckDeletionPanel, BorderLayout.NORTH);
 
         JLabel deletedTruckId = new JLabel();
-        deletedTruckId.setText("Id of truck to be deleted:");
+        deletedTruckId.setText(" ID of truck to be deleted: ");
         deletedTruckId.setFont(new Font("Arial", Font.PLAIN, 25));
         truckDeletionPanel.add(deletedTruckId);
 
@@ -346,40 +334,33 @@ public class ReceivingSystem implements ActionListener {
         deleteTruckButton.setFocusable(false);
         truckDeletionPanel.add(deleteTruckButton);
 
-        deleteTruckButton.addActionListener(e -> removeTruck(parseInt(deletedTruckText.getText())));
+        deleteTruckButton.addActionListener(e -> {removeTruck(parseInt(deletedTruckText.getText())); deletedTruckText.setText("");});
 
-
-        JPanel trucksPanel = new JPanel();
-        trucksPanel.setLayout(new FlowLayout(FlowLayout.CENTER,10,15));
-        for(Truck t:this.warehouse.getTrucks()){
-            trucksPanel.add(new JLabel(t.toString()), FlowLayout.LEADING);
-        }
-        deleteTruckPanel.add(trucksPanel);
-
-//        addTruckPanel.setBackground(new Color(255, 255, 0));
-//        deleteTruckPanel.setBackground(new Color(0, 0, 255));
-//        addBoxPanel.setBackground(new Color(0, 255, 255));
-        //deleteBoxPanel.setBackground(new Color(255, 0, 255));
-//        currentPanel.setBackground(new Color(0,255,0));
-        //titlePanel.setBackground(new Color(255,0,0));
-
+        this.trucks = new JPanel();
+        trucks.setLayout(new FlowLayout(FlowLayout.CENTER, 200, 8));
+        JScrollPane scrollableTrucks = new JScrollPane(this.trucks);
+        deleteTruckPanel.add(scrollableTrucks, BorderLayout.CENTER);
     }
 
     /**
      * start
      * will make the j frame and panels visible to user
      */
-    void start() {
-
-        String fileName = JOptionPane.showInputDialog("Please print out the exact name of the info file(with file extensions)");
-        this.saveFile = new File(fileName);
+    public void start() {
+        String fileName = JOptionPane.showInputDialog("Please print out the exact name of the info file (without file extensions)");
+        this.saveFile = new File(fileName + ".txt");
         this.downloadInventory(this.saveFile);
         this.frame.setVisible(true);
     }
 
-//    void quit(){
-//        this.saveFile
-//    }
+    /**
+     * quit
+     * will close the window and while saving info to file
+     */
+    void quit(){
+        this.uploadInventory(this.saveFile);
+        frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+    }
 
     /**
      * createBox
@@ -389,20 +370,17 @@ public class ReceivingSystem implements ActionListener {
      * @param height- new height
      * @param length- new length
      * @param width - new width
+     * @param color - mew color
      */
-    public void setBoxView() {
-      
-    }
-    public void setTruckView() {
-    
-    }
-    public void createBox(int boxID, int weight, int height, int length, int width) {
-        if(weight == 0 || height == 0 || length == 0 || width == 0){
-            System.out.println("something is wrong with your parameters. PLease enter integers.");
-        }
-        else {
-            this.warehouse.addBox(new Box(boxID, weight, height, length, width));
-            System.out.println(this.warehouse.toString());
+    public void createBox(int boxID, int weight, int height, int length, int width, Color color) {
+        if ((weight == -1)|| (height == -1) || (length == -1) || (width == -1) || boxID == -1) {
+            throw new IllegalArgumentException("something is wrong with your parameters. PLease enter integers.");
+        } else if ((weight == 0)|| (height == 0) || (length == 0) || (width == 0)) {
+            throw new IllegalArgumentException("0 cannot be the property of a box.");
+        } else if(isEqualToOtherBoxID(boxID)){
+            throw new IllegalArgumentException("This ID is already being used.");
+        } else {
+            this.warehouse.addBox(new Box(boxID, weight, height, length, width, color));
         }
     }
 
@@ -413,6 +391,7 @@ public class ReceivingSystem implements ActionListener {
      */
     public void removeBox(int boxID) {
         this.warehouse.removeBox(boxID);
+        showBoxes();
     }
 
     /**
@@ -420,19 +399,29 @@ public class ReceivingSystem implements ActionListener {
      * creates a new truck and adds it to warehouse list of trucks
      * @param truckID - id of truck
      * @param maxWeight - max weight of truck
-     * @param height - ehight of truck
+     * @param height - height of truck
      * @param length - length of truck
      * @param width - width of truck
      */
     public void createTruck(int truckID, int maxWeight, int height, int length, int width) {
-        this.warehouse.addTruck(new Truck(truckID, maxWeight, height, length, width));
-        System.out.println(this.warehouse.toString());
+        if ((maxWeight == -1) || (height == -1) || (length == -1) || (width == -1) || truckID == -1) {
+            throw new IllegalArgumentException("Something is wrong with your parameters. Please enter integers.");
+
+        } else if ((maxWeight == 0) || (height == 0) || (length == 0) || (width == 0)) {
+            throw new IllegalArgumentException("0 cannot be the property of a box.");
+
+        } else if(isEqualToOtherTruckID(truckID) ){
+            throw new IllegalArgumentException("This ID is already being used.");
+
+        } else {
+            this.warehouse.addTruck(new Truck(truckID, maxWeight, height, length, width));
+        }
     }
 
     /**
      * removeTruck
      * removes truck from list of trucks in the warehouse
-     * @param truckID - id to remove
+     * @param truckID - id to identify truck
      */
     public void removeTruck(int truckID) {
         this.warehouse.removeTruck(truckID);
@@ -460,6 +449,7 @@ public class ReceivingSystem implements ActionListener {
      * scans a given file and uses all info to initiate a warehouse with values
      * @param file - the file with info
      */
+
     public void downloadInventory(File file){
         try {
             Scanner scanner = new Scanner(file);
@@ -467,8 +457,7 @@ public class ReceivingSystem implements ActionListener {
             String[] infoStr; // string array of info
             String location = "inventory"; // variable to tell if boxes should be stored in warehouse or in truck
             ArrayList<Integer> info = new ArrayList<>(); // arraylist of info for easier manipulation
-            ArrayList<Truck> trucks = new ArrayList<>(); // arraylist of trucks for easier manipulation
-            Warehouse warehouse = null;
+            Color newColor = null;
 
             while (scanner.hasNext()) {
 
@@ -477,53 +466,115 @@ public class ReceivingSystem implements ActionListener {
                 infoStr = line.split(" ");
                 info = toInt(infoStr);
 
+                if (infoStr[0].equals("Box")) { // onl;y box objects have an RGB code in their saved data
+                    newColor = getColor(infoStr[infoStr.length - 1]);
+                }
+
                 if (infoStr[0].equals("Warehouse")) { // creates a warehouse with data if line starts iwth warehosue
                     location = "inventory";
-                    warehouse = new Warehouse(info.get(0), info.get(1), info.get(2));
+                    this.warehouse.setWarehouseID(info.get(0));
+                    this.warehouse.setMAX_BOXES(info.get(1));
+                    this.warehouse.setMAX_TRUCKS(info.get(2));
 
                 } else if (infoStr[0].equals("Truck")) {// creates a truck with data if line starts iwth truck
                     location = "truck";
-                    trucks.add(new Truck(info.get(0),info.get(1),info.get(2),info.get(3),info.get(4))); // adds to arraylsit
+                    this.warehouse.addTruck((new Truck(info.get(0),info.get(1),info.get(2),info.get(3),info.get(4)))); // adds to arraylsit
 
                 } else if (infoStr[0].equals("Box")) { // creates box with info
                     if (location.equals("inventory")) { // adds to warehouse inventory
-                        warehouse.addBox(new Box((info.get(0)), info.get(1), info.get(2), info.get(3),info.get(4), info.get(5),  info.get(6), info.get(7)));
+                        this.warehouse.addBox(new Box((info.get(0)), info.get(1), info.get(2), info.get(3),info.get(4), newColor));
 
                     } else { // adds box to truck in final index of trucks arraylist (always most recently made truck)
-                        trucks.get(trucks.size() - 1).addBox(new Box((info.get(0)), info.get(1), info.get(2), info.get(3),info.get(4), info.get(5),  info.get(6), info.get(7)));
+                        this.warehouse.getTruck(this.warehouse.getTrucks().size() - 1).addBox(new Box((info.get(0)), info.get(1), info.get(2), info.get(3),info.get(4), info.get(5),  info.get(6), info.get(7), newColor));
                     }
 
                 }
 
-
+                newColor = null;
             }
 
-            this.setWarehouse(warehouse);
-            this.warehouse.setTrucks(trucks);
-            // still doesnt get value into main and cant add params or return bc of uml
 
         } catch (FileNotFoundException e) {
-            System.out.println("File not found: " + file.getName());
+            System.out.println("File not found: " + file.getName() + " Path: " + this.saveFile.getAbsolutePath());
         }
 
 
     }
 
     /**
-     * Arraylist
+     * toInt
      * @param array - changing string arrays into int arrays for ease of use - helper method
-     * @return - Intager array equivilent of array
+     * @return - integer array equivalent of array
      */
     private ArrayList<Integer> toInt(String[] array) {
         ArrayList<Integer> ints= new ArrayList<>();
 
-        for (int index = 1; index < array.length; index++) {// starts at one to not copy the object type into a int
-            ints.add(Integer.parseInt(array[index]));
+        if (array[0].equals("Box")) {
+            for (int index = 1; index < (array.length - 1); index++) {// starts at one to not copy the object type into a int or color
+                ints.add(Integer.parseInt(array[index]));
+            }
+        } else {
+            for (int index = 1; index < (array.length); index++) {// starts at one to not copy the object type into a int or color
+                ints.add(Integer.parseInt(array[index]));
+            }
         }
-
         return ints;
     }
 
+    /**
+     * showBoxes
+     * Updates boxes to visualize everytime box deleter is opened
+     */
+    void showBoxes(){
+        this.boxLabels = new ArrayList<JLabel>();
+        this.boxes.removeAll();
+        for(Box b: getWarehouse().getInventory()){
+
+            String[] labelArray = b.toStringForWarehouse().split(" ");
+            String[] newLabelArray = {labelArray[1],labelArray[2],labelArray[3],labelArray[4],labelArray[5],labelArray[6]};
+            StringBuilder string = new StringBuilder();
+            for (String value : newLabelArray){
+                string.append(value + " ");
+            }
+            String labelText = string.toString();
+            JLabel label = new JLabel(labelText);
+            label.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+            boxLabels.add(label);
+        }
+        JLabel boxFormat = new JLabel("ID Width Height Length Weight R,G,B");
+        boxes.add(boxFormat);
+        for(JLabel j : boxLabels){
+            boxes.add(j);
+        }
+        boxes.setPreferredSize(new Dimension(500,this.warehouse.getInventory().size()*25));
+    }
+
+    /**
+     * showBoxes
+     * Updates boxes to visualize everytime box deleter is opened
+     */
+    void showTrucks(){
+        this.truckLabels = new ArrayList<JLabel>();
+        this.trucks.removeAll();
+        for(Truck t: getWarehouse().getTrucks()){
+            int[] labelArray = t.asArray();
+            String[] newLabelArray = {String.valueOf(labelArray[0]),String.valueOf(labelArray[1]),String.valueOf(labelArray[2]),String.valueOf(labelArray[3]),String.valueOf(labelArray[4])};
+            StringBuilder string = new StringBuilder();
+            for (String value : newLabelArray){
+                string.append(value + " ");
+            }
+            String labelText = string.toString();
+            JLabel label = new JLabel(labelText);
+            label.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+            truckLabels.add(label);
+        }
+        JLabel truckFormat = new JLabel("ID MaxWeight Height Length Width");
+        trucks.add(truckFormat);
+        for(JLabel j : truckLabels){
+            trucks.add(j);
+        }
+        trucks.setPreferredSize(new Dimension(500,this.warehouse.getInventory().size()*25));
+    }
 
     /**
      * getWarehouse
@@ -532,15 +583,6 @@ public class ReceivingSystem implements ActionListener {
      */
     public Warehouse getWarehouse() {
         return warehouse;
-    }
-
-    /**
-     * setWarehouse
-     * sets warehouse object
-     * @param warehouse
-     */
-    public void setWarehouse(Warehouse warehouse) {
-        this.warehouse = warehouse;
     }
 
     /**
@@ -554,18 +596,39 @@ public class ReceivingSystem implements ActionListener {
             if(((int)num.charAt(i)>=48)&&((int)num.charAt(i)<=57)) {
                 returnNum = returnNum*10+ ((int)num.charAt(i)-48);
             } else {
-                return 0;
+                return -1;
             }
-
         }
+
         return returnNum;
     }
-
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {}
 
+    /**
+     * getColor
+     * will turn an RGB code into a Color object
+     * @param rgb - rgb code in string format
+     * @return - Color obejct
+     */
+    public Color getColor(String rgb) {
+        String[] arrayRGB = rgb.split(",");
+
+        try {
+            int red = Integer.parseInt(arrayRGB[0].trim());
+            int green = Integer.parseInt(arrayRGB[1].trim());
+            int blue = Integer.parseInt(arrayRGB[2].trim());
+
+            return (new Color(red, green, blue));
+        } catch (NumberFormatException e) {
+            throw (new IllegalArgumentException("getColor method has received a not RGB value and cannot convert - savefile info has been corrupted"));
+        }
     }
-
+    /**
+     * changePanel
+     * changes that panel
+     * @param choice - user choice
+     */
     public void changePanel(int choice){
         if (choice > 4 || choice < 1){
             throw new IllegalArgumentException("Invalid choice: Argument must be between 1 and 4");
@@ -601,5 +664,42 @@ public class ReceivingSystem implements ActionListener {
             deleteBoxPanel.setVisible(false);
             deleteTruckPanel.setVisible(false);
             frame.add(addBoxPanel);        }
+    }
+
+    /**
+     * Checks if an ID is already in use
+     * @param truckID
+     * @return boolean isEqual
+     */
+    boolean isEqualToOtherTruckID(int truckID){
+        boolean isEqual = false;
+        for (Truck t : warehouse.getTrucks()){
+            if (truckID == t.getTruckID()){
+                isEqual = true;
+            }
+        }
+        return(isEqual);
+    }
+
+    /**
+     * Checks if an ID is already in use
+     * @param boxID
+     * @return isEquals
+     */
+    boolean isEqualToOtherBoxID(int boxID){
+        boolean isEqual = false;
+        for (Box b : warehouse.getInventory()){
+            if (boxID == b.getBoxID()){
+                isEqual = true;
+            }
+        }
+        for (Truck truck : warehouse.getTrucks()){
+            for(Box b : truck.getBoxes()){
+                if (boxID == b.getBoxID()){
+                    isEqual = true;
+                }
+            }
+        }
+        return(isEqual);
     }
 }

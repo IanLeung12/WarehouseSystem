@@ -1,7 +1,16 @@
+/**
+ * Main
+ * @author Dilen De Silva, Michael Khart
+ * ICS4UE
+ * @version 1.0 - 2023/10/10
+ * Main - Uses all other classes for the final program
+ */
 public class Main {
     public static void main(String[] args) {
-        ReceivingSystem sys = new ReceivingSystem();
+        Warehouse warehouse = new Warehouse();
+        ReceivingSystem sys = new ReceivingSystem(warehouse);
         sys.start();
-    }
+        System.out.println(warehouse.toString());
 
+    }
 }
